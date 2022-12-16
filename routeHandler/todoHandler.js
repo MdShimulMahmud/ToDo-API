@@ -6,9 +6,52 @@ const router = express.Router();
 const Todo = mongoose.model("Todo", todoSchema);
 router.use(express.json());
 
+// instances methods
 router.get("/", async (req, res) => {
   const result = await Todo.find({ status: "active" });
   res.send(result);
+});
+
+router.get("/active", async (req, res) => {
+  const todo = new Todo();
+  const data = await todo.findActive();
+  res.status(200).json({
+    data,
+  });
+});
+
+router.get("/active-callback", async (req, res) => {
+  const todo = new Todo();
+  todo.findActiveCallback((err, data) => {
+    if (err) {
+      res.status(500).json({
+        message: "There was an error!",
+      });
+    } else {
+      res.status(200).json({
+        data,
+      });
+    }
+  });
+});
+
+// static methods
+
+router.get("/sh", async (req, res) => {
+  const data = await Todo.findByJS();
+  res.status(200).json({
+    data,
+  });
+});
+
+// query helpers
+// static methods
+
+router.get("/language", async (req, res) => {
+  const data = await Todo.find().findByLanguage("active");
+  res.status(200).json({
+    data,
+  });
 });
 
 router.get("/:id", async (req, res) => {

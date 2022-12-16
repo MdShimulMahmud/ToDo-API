@@ -4,7 +4,7 @@ const todoHandler = require("./routeHandler/todoHandler");
 
 const app = express();
 app.use(express.json());
-const PORT = 5000;
+const PORT = 3000;
 
 mongoose.set("strictQuery", true);
 mongoose
