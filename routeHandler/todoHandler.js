@@ -1,17 +1,35 @@
 const express = require("express");
 const todoSchema = require("../models/todoSchema");
 const mongoose = require("mongoose");
+const checkLogin = require("../middlewares/checkLogin");
 const router = express.Router();
 
 const Todo = mongoose.model("Todo", todoSchema);
 router.use(express.json());
 
 // instances methods
-router.get("/", async (req, res) => {
-  const result = await Todo.find({ status: "active" });
-  res.send(result);
+router.get("/", checkLogin, (req, res) => {
+  Todo.find({})
+    .populate("user", "name username -_id")
+    .select({
+      _id: 0,
+      __v: 0,
+      date: 0,
+    })
+    .limit(2)
+    .exec((err, data) => {
+      if (err) {
+        res.status(500).json({
+          error: "There was a server side error!",
+        });
+      } else {
+        res.status(200).json({
+          result: data,
+          message: "Success",
+        });
+      }
+    });
 });
-
 router.get("/active", async (req, res) => {
   const todo = new Todo();
   const data = await todo.findActive();
@@ -45,7 +63,6 @@ router.get("/sh", async (req, res) => {
 });
 
 // query helpers
-// static methods
 
 router.get("/language", async (req, res) => {
   const data = await Todo.find().findByLanguage("active");
