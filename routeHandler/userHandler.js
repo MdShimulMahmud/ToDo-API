@@ -6,7 +6,7 @@ const router = express.Router();
 const userSchema = require("../models/userSchema");
 const todoSchema = require("../models/todoSchema");
 const User = new mongoose.model("User", userSchema);
-const Todo = new mongoose.model("User", todoSchema);
+const Todo = new mongoose.model("Todo", todoSchema);
 
 // SIGNUP
 router.post("/signup", async (req, res) => {
